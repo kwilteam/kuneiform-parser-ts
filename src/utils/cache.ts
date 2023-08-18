@@ -86,7 +86,7 @@ class TtlCache<T> {
         const entry = this.cache.get(k);
 
         // If the entry is expired, remove it from the cache and return null.
-        if (entry && entry.d < Date.now()) {
+        if (entry && entry.d <= Date.now()) {
             this.cache.delete(k);
             return null;
         }

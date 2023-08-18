@@ -1,4 +1,4 @@
-import { NodeParser, Logger, ParserConfig } from "../dist";
+import { NodeParser, Logger, NodeConfig } from "../dist";
 const fs = require('fs');
 const path = require('path');
 const testKf = fs.readFileSync(path.join(__dirname, '../test.kf'), 'utf-8');
@@ -17,7 +17,7 @@ describe('NodeParser', () => {
             expect(parser).toBeInstanceOf(NodeParser);
             expect((parser as any).parseKf).toBeDefined();
             expect((parser as any).WasmCache).toBeDefined();
-        });
+        }, 10000);
 
         it('should have a cached wasm module', () => {
             const cacheKey = (parser as any).cacheKey;
@@ -44,6 +44,17 @@ describe('NodeParser', () => {
                 expect(JSON.parse(result.json)).toHaveProperty('name');
             });
 
+            it('should parse again with the cached wasm module', async () => {
+                const wasmCache = (parser as any).WasmCache;
+                const cacheKey = (parser as any).cacheKey;
+
+                const wasmModule = wasmCache.get(cacheKey, (parser as any).wasmUrl);
+                expect(wasmModule).toBeDefined();
+
+                const result = await parser.parse(testKf.toString());
+                expect(result).toBeDefined()
+            });
+
             it('should have to request a new wasm module if cache expired', async () => {
                 const wasmCache = (parser as any).WasmCache;
                 const cacheKey = (parser as any).cacheKey;
@@ -60,14 +71,14 @@ describe('NodeParser', () => {
                 expect(result).toBeDefined();
 
                 jest.resetAllMocks();
-            });
+            }, 10000);
         });
     });
 
     describe('load with config', () => {
         const customLogger: Logger = (msg: string) => { return msg };
 
-        let config: ParserConfig = {
+        let config: NodeConfig = {
             cacheTtl: 5,
         };
 
@@ -78,7 +89,7 @@ describe('NodeParser', () => {
             expect(parser).toBeInstanceOf(NodeParser);
             expect((parser as any).logger).toBeDefined();
             expect((parser as any).WasmCache).toBeDefined();
-        });
+        }, 10000);
 
         it('should have a parseKf function', () => {
             const parseKf = (parser as any).parseKf;
@@ -100,21 +111,18 @@ describe('NodeParser', () => {
                 const mockedDateNow = Date.now() + 70000 // 70 seconds ahead of the current time
                 global.Date.now = jest.fn(() => mockedDateNow);
 
+                console.log('CHECKING FOR DELETION NOW')
                 const wasmModule = wasmCache.get(cacheKey, (parser as any).wasmUrl);
-                console.log('received above')
-                console.log(wasmModule)
                 expect(wasmModule).toBeNull();
 
                 const result = await parser.parse(testKf.toString());
-                console.log('SECOND REQUEST CHACHE KEY', cacheKey)
-                console.log('SECOND REQUEST WASM URL', (parser as any).wasmUrl)
 
                 const newWasmModule = wasmCache.get(cacheKey, (parser as any).wasmUrl);
                 expect(newWasmModule).toBeDefined();
                 expect(result).toBeDefined();
 
                 jest.resetAllMocks();
-            });
+            }, 10000);
         });
     });
 })

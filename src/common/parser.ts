@@ -18,7 +18,7 @@ import { Nillable, ParseKf } from '../utils/types.js';
 import { Logger, NodeConfig, configDefaults, WebConfig } from './config.js';
 import { ParseRes } from '../utils/resReq.js';
 
-export class Parser<T extends NodeConfig | WebConfig> {
+export class Parser<T> {
     private cacheKey: string = 'kfCurrent';
     private logger: Logger = configDefaults.logger;
     private readonly wasmUrl: string = wasmURL;
@@ -81,11 +81,6 @@ export class Parser<T extends NodeConfig | WebConfig> {
     private async getWasmBinary(): Promise<Uint8Array> {
         if (!this.WasmCache) {
             throw new Error('WasmCache not initialized. Please call `await Parser.load()` first.');
-        }
-        const cacheRes: Nillable<Uint8Array> = this.WasmCache?.get(this.cacheKey, this.wasmUrl);
-
-        if (cacheRes) {
-            return cacheRes;
         }
 
         this.logger(`Requesting WASM module from ${this.proxyUrl + this.wasmUrl}...`)
