@@ -4,4 +4,4 @@ const config: WebConfig = {
     corsProxyUrl: 'https://cors-anywhere.herokuapp.com/'
 };
 
-const parser = await NodeParser.load(config);
+const parser = await NodeParser.load(config)

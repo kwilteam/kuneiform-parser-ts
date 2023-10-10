@@ -28,9 +28,6 @@ function log(message) {
       }
     });
   }
-  
-  // Example usage:
-  log('This is a test log message.');
 
 
 

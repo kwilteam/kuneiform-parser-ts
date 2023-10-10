@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { WasmCache } from '../utils/cache.js';
 
-const wasmURL = 'https://github.com/KwilLuke/kf-v0.4.1/raw/main/kuneiform.wasm';
+const wasmURL = 'https://github.com/kwilteam/kuneiform/releases/download/v0.5.0-alpha/kuneiform.wasm';
 
 // Polyfill up crypto.getRandomValues() for globalThis object
 if (typeof globalThis.crypto === 'undefined') {
