@@ -1,6 +1,6 @@
 {
   "name": "kuneiform-parser",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A JavaScript / TypeScript compatible parser for the Kuneiform language. This should be used with the Kwil NPM package.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
